@@ -1,16 +1,16 @@
+import { AuthenticationProvider } from "@/components/core/authentication-provider";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { ReactNode } from "react";
 
-export default function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface AppLayoutProps {
+  children: ReactNode;
+}
+
+export default function AppLayout({ children }: AppLayoutProps) {
   const accessToken = cookies().get("access-token");
-
   if (!accessToken) {
     redirect("/signin");
   }
-
-  return children;
+  return <AuthenticationProvider>{children}</AuthenticationProvider>;
 }
