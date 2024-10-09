@@ -1,5 +1,11 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
+import * as AuthTokens from "@/common/auth-tokens";
+import { UserService } from "@/services/http/user-service";
 
-export default function Home() {
-  return <Link href={"signin"}>Hello world</Link>;
+export default async function Home() {
+  const accessToken = await AuthTokens.get("access");
+  if (!accessToken) redirect("/signin");
+  const loggedUser = await UserService.getLoggedUser();
+  if (loggedUser.role === "user") redirect("/profile");
+  return null;
 }

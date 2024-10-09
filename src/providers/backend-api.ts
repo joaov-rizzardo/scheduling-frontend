@@ -1,52 +1,43 @@
 import * as AuthTokens from "@/common/auth-tokens";
-import { TokenService } from "@/services/auth/token-service";
-import axios, { AxiosError, AxiosInstance } from "axios";
+import { InvalidRefreshToken } from "@/errors/invalid-refresh-token";
+import { AuthService } from "@/services/http/auth-service";
 
-interface ErrorResponse {
+export interface ErrorResponse {
   message?: string;
   code?: string;
 }
 
-const backendApi: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-backendApi.interceptors.request.use(async (config) => {
+export async function backendApi(
+  input: RequestInfo | URL,
+  init?: RequestInit
+): Promise<Response> {
+  const baseURL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const token = await AuthTokens.get("access");
-  console.log({ token });
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
+  const response = await fetch(`${baseURL}/${input}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+  });
+  if (response.status !== 401) {
+    return response;
   }
-  return config;
-});
-
-backendApi.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config;
-    const response = error.response;
-    const data = response?.data as ErrorResponse;
-    if (!originalRequest || !data) throw error;
-    if (response?.status !== 401 || data.code !== "invalid_access_token") {
-      throw error;
-    }
-    try {
-      const refreshToken = await AuthTokens.get("refresh");
-      if (!refreshToken) throw error;
-      const { accessToken } = await TokenService.refresh(refreshToken);
-      await AuthTokens.set("access", accessToken);
-      originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-      return backendApi(originalRequest);
-    } catch (refreshError) {
-      await AuthTokens.del("access");
-      await AuthTokens.del("refresh");
-      window.location.href = "/signin";
-      throw refreshError;
-    }
+  const errorResponse = (await response.clone().json()) as ErrorResponse;
+  if (errorResponse.code !== "invalid_access_token") {
+    return response;
   }
-);
-
-export default backendApi;
+  try {
+    const refreshToken = await AuthTokens.get("refresh");
+    if (!refreshToken) throw new InvalidRefreshToken();
+    const { accessToken } = await AuthService.refresh(refreshToken);
+    await AuthTokens.set("access", accessToken);
+    return backendApi(input, init);
+  } catch {
+    await AuthTokens.del("access");
+    await AuthTokens.del("refresh");
+  } finally {
+    return response;
+  }
+}

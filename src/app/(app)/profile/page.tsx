@@ -1,10 +1,11 @@
-import backendApi from "@/providers/backend-api";
+import { LogoutTeste } from "./logout-teste";
 
 export default async function Profile() {
-  const data = await backendApi.get("user/token");
+  // const data = await backendApi.get("user/token");
   return (
     <div>
       <h1>Perfil</h1>
+      <LogoutTeste />
     </div>
   );
 }
