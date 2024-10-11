@@ -2,8 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
 }
