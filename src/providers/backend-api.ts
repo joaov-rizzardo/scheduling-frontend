@@ -21,7 +21,8 @@ export async function backendApi(
       ...init?.headers,
     },
   });
-  if (response.status !== 401) {
+  const isFromServer = typeof window === undefined;
+  if (response.status !== 401 || isFromServer) {
     return response;
   }
   const errorResponse = (await response.clone().json()) as ErrorResponse;
@@ -34,10 +35,9 @@ export async function backendApi(
     const { accessToken } = await AuthService.refresh(refreshToken);
     await AuthTokens.set("access", accessToken);
     return backendApi(input, init);
-  } catch {
+  } catch (error) {
     await AuthTokens.del("access");
     await AuthTokens.del("refresh");
-  } finally {
     return response;
   }
 }

@@ -2,6 +2,7 @@ import { AuthenticationProvider } from "@/components/core/authentication-provide
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import { Header } from "./_components/header";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -12,5 +13,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
   if (!accessToken) {
     redirect("/signin");
   }
-  return <AuthenticationProvider>{children}</AuthenticationProvider>;
+  return (
+    <AuthenticationProvider>
+      <div className="w-screen h-dvh bg-zinc-50">
+        <Header />
+        {children}
+      </div>
+    </AuthenticationProvider>
+  );
 }
