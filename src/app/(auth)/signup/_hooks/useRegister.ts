@@ -22,7 +22,11 @@ export function useRegister() {
           .then(async ({ accessToken, refreshToken }) => {
             await Promise.all([
               AuthTokens.set("access", accessToken),
-              AuthTokens.set("refresh", refreshToken),
+              AuthTokens.set("refresh", refreshToken, {
+                sameSite: "lax",
+                httpOnly: true,
+                secure: true,
+              }),
             ]);
             router.push("/");
           })

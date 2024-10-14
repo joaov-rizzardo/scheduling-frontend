@@ -1,6 +1,7 @@
 import * as AuthTokens from "@/common/auth-tokens";
 import { InvalidRefreshToken } from "@/errors/invalid-refresh-token";
 import { AuthService } from "@/services/http/auth-service";
+import { redirect } from "next/navigation";
 
 export interface ErrorResponse {
   message?: string;
@@ -21,8 +22,7 @@ export async function backendApi(
       ...init?.headers,
     },
   });
-  const isFromServer = typeof window === undefined;
-  if (response.status !== 401 || isFromServer) {
+  if (response.status !== 401) {
     return response;
   }
   const errorResponse = (await response.clone().json()) as ErrorResponse;
@@ -35,9 +35,10 @@ export async function backendApi(
     const { accessToken } = await AuthService.refresh(refreshToken);
     await AuthTokens.set("access", accessToken);
     return backendApi(input, init);
-  } catch (error) {
-    await AuthTokens.del("access");
-    await AuthTokens.del("refresh");
+  } catch {
+    const isFromServer = typeof window === "undefined";
+    await Promise.all([AuthTokens.del("access"), AuthTokens.del("refresh")]);
+    if (isFromServer) redirect("/signin");
     return response;
   }
 }
