@@ -15,7 +15,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }
   return (
     <AuthenticationProvider>
-      <div className="w-screen h-dvh bg-zinc-50">
+      <div className="w-dvw h-dvh bg-zinc-100">
         <Header />
         {children}
       </div>

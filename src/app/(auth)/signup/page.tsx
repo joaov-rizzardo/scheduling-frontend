@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { RegisterForm } from "./_components/register-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Image from "next/image";
+import blackLogo from "@/../public/assets/images/black-logo.png";
 
 export default function SignUp() {
   return (
     <ScrollArea className="h-full">
       <div className="px-5 py-3 flex flex-col items-center justify-center h-full">
-        <h1 className="text-2xl lg:text-3xl mb-1 lg:mb-3 text-blue-800 font-semibold">Registrar</h1>
+        <Image src={blackLogo} alt="Logo schedulix" className="w-44 md:w-56 mb-3" />
         <RegisterForm />
         <span className="mt-5 text-zinc-700">
           Já possui uma conta?{" "}
