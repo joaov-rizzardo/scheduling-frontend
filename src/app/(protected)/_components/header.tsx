@@ -8,7 +8,7 @@ import { CompanySelector } from "./company-selector";
 
 export function Header() {
   return (
-    <div className="px-5 lg:px-10 w-full h-16  bg-zinc-900 flex items-center gap-8 lg:gap-16">
+    <div className="px-5 lg:px-10 w-full h-16 bg-zinc-900 flex items-center gap-8 lg:gap-16">
       <Link href={"/"} className="text-zinc-200">
         <Image
           src={simpleLogo}

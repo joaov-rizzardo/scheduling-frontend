@@ -103,7 +103,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>E-mail</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} type="email" />
               </FormControl>
             </FormItem>
           )}

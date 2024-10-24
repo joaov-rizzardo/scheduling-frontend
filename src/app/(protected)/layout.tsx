@@ -15,9 +15,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }
   return (
     <AuthenticationProvider>
-      <div className="w-dvw h-dvh bg-zinc-100">
+      <div className="w-dvw h-dvh overflow-y-hidden bg-zinc-100">
         <Header />
-        {children}
+        <div
+          style={{
+            height: "calc(100dvh - 64px)",
+          }}
+        >
+          {children}
+        </div>
       </div>
     </AuthenticationProvider>
   );

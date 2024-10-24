@@ -1,3 +1,5 @@
+import { ArrowRightIcon } from "./data/arrow-right-icon";
+import { CheckIcon } from "./data/check-icon";
 import { ChevronDownIcon } from "./data/chevron-down-icon";
 import { ConfigIcon } from "./data/config-icon";
 import { LockIcon } from "./data/lock-icon";
@@ -12,4 +14,6 @@ export const IconMapper = {
   config: ConfigIcon,
   lock: LockIcon,
   notification: NotificationIcon,
+  arrow_right: ArrowRightIcon,
+  check: CheckIcon,
 };
